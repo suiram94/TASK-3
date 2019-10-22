@@ -1,0 +1,129 @@
+---
+title: "task_3"
+author: "marius"
+date: "22 10 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+rm(list=ls())
+
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(readr)
+```
+
+```{r}
+setwd("C:/Users/mariu/Documents/Skole/5. Semester/introduction to dataciense/Arbeidskrav/Task_3")
+
+births2017 <- read_fwf("Nat2017PublicUS.c20180516.r20180808.txt",
+                       fwf_positions(start = c(9,13,504,475),
+                         end = c(12,14,507,475),
+                         col_names = c("Birth_year","Birth_month","Birth_weight", "sex")))
+
+births2018 <- read_fwf("Nat2018PublicUS.c20190509.r20190717.txt",
+                       fwf_positions(start = c(9,13,504,475),
+                         end = c(12,14,507,475),
+                         col_names = c("Birth_year","Birth_month","Birth_weight", "sex")))
+
+```
+
+
+
+```{r}
+#TASK 1
+Number2k17 <- births2017 %>% count(sex)
+Number2k17
+proposition_numbers2k17 <- 1977663/1887091
+proposition_numbers2k17
+
+Number2k18 <- births2018 %>% count(sex)
+Number2k18
+
+proposition_numbers2k18 <- 1943273/1858261
+proposition_numbers2k18
+
+Numberdiff <- Number2k17$n - Number2k18$n
+Numberdiff
+
+paste("som vi kan se var forholtstallet i 2017", proposition_numbers2k17, "mens i 2018 var froholdstallet", proposition_numbers2k18,"Det betyr at forholdet mellom gutter og jenter har minket fra 2017 til 2018")
+
+```
+
+```{r}
+#Snitt vekt ved fødsel
+
+births2017$Birth_weight <- as.numeric(births2017$Birth_weight)
+
+avrage_weight2017 <- births2017 %>% summarise(avgweight = mean(Birth_weight))
+avrage_weight2017
+
+births2018$Birth_weight <- as.numeric(births2018$Birth_weight)
+
+avrage_weight2018 <- births2018 %>% summarise(avgweight = mean(Birth_weight))
+avrage_weight2018
+
+total_average <- ((avrage_weight2017+avrage_weight2018)/2)
+total_average
+
+paste("Jeg har regnet ut at snittvekten i 2017 var", avrage_weight2017, "gram, mens i 2018 var den på", avrage_weight2018, "gram. Dette betyr at det totalet snittet for 2017 og 2018 er på", total_average,"gram.")
+
+```
+
+
+```{r}
+
+#TASK 2
+
+births2018$sex = as.factor(births2018$sex)
+plot2018 <- births2018[ ,-1:-2]
+
+weightplot <- ggplot(births2018, aes(x=Birth_weight, color=sex))+geom_density()
+weightplot
+
+paste("Ja det er en forskjell. Jeg ser at gutter har en litt høyere snittvekt enn gutter.")
+```
+
+
+
+
+```{r}
+#TASK 3
+
+yeardiff2017 <- births2017 %>% 
+  group_by(Birth_month) %>% 
+  summarise(meanweight = mean(Birth_weight))
+yeardiff2017
+
+yeardiff2018 <- births2018 %>% 
+  group_by(Birth_month) %>% 
+  summarise(meanweight = mean(Birth_weight))
+yeardiff2018
+
+paste("Ja, det er en liten forsjell mellom måndene i de forkjellige årene.")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
